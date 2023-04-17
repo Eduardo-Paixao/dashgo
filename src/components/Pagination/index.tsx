@@ -5,10 +5,10 @@ import { PaginationItem } from "./PaginationItem";
 export const Pagination = () => {
   return (
     <Stack
-      direction={"row"}
+      direction={["column","row"]}
       mt={"8"}
       justifyContent={"space-between"}
-      alignContent={"center"}
+      alignItems={"center"}
       spacing={"6"}
     >
       <Box>
