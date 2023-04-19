@@ -1,7 +1,9 @@
 import { Button, Flex, Stack } from "@chakra-ui/react";
 import { Input } from "../components/Form/Input";
+import { useRouter } from "next/router";
 
 export default function SignIn() {
+  const router = useRouter()
   return (
     <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center">
       <Flex
@@ -16,7 +18,7 @@ export default function SignIn() {
         <Stack spacing={4}>
           <Input label="E-mail" name="email" type="email" />
           <Input label="Senha" name="password" type="password" />
-          <Button type="submit" colorScheme="pink">
+          <Button  colorScheme="pink" onClick={()=>router.push('/dashboard')}>
             Entrar
           </Button>
         </Stack>

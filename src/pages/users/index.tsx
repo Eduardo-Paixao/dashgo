@@ -17,6 +17,7 @@ import {
   Tr,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 
@@ -25,7 +26,7 @@ export default function UserList() {
     lg: true,
     base: false,
   });
-
+  const router = useRouter();
   return (
     <Box>
       <Header />
@@ -42,6 +43,7 @@ export default function UserList() {
               fontSize={"sm"}
               colorScheme="pink"
               leftIcon={<Icon as={RiAddLine} fontSize={"20"} />}
+              onClick={()=>router.push('users/create')}
             >
               Criar novo usuário
             </Button>
