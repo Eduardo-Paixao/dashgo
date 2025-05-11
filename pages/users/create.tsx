@@ -13,14 +13,15 @@ import {
 } from "@chakra-ui/react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  FieldError,
-  FieldValues,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { FieldError, SubmitHandler, useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { api } from "@/src/services/api";
+import { useRouter } from "next/router";
+import { CreateUserFormData } from "@/src/types/UsersTypes";
 
 export default function CreateUser() {
+  const router = useRouter();
+
   const createUserFormSchema = yup.object().shape({
     name: yup.string().required("Nome obrigatório"),
     email: yup.string().required("E-mail obrigatório").email("E-mail invalido"),
@@ -28,23 +29,35 @@ export default function CreateUser() {
       .string()
       .required("Senha obrigatória")
       .min(8, "No minimo 8 caracteres"),
-      passwordConfirmation: yup
+    password_confirmation: yup
       .string()
       .oneOf([undefined, yup.ref("password")], "As senhas precisam ser iguais"),
+  });
+
+  const createUser = useMutation(async (user: CreateUserFormData) => {
+    const response = await api.post("users", {
+      user: {
+        ...user,
+        created_At: new Date(),
+      },
+    });
+    return response.data.user;
   });
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<CreateUserFormData>({
     resolver: yupResolver(createUserFormSchema),
   });
 
-  const handleCreateUser: SubmitHandler<FieldValues> = async (values) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+  const handleCreateUser: SubmitHandler<CreateUserFormData> = async (
+    values
+  ) => {
+    await createUser.mutateAsync(values);
+    router.push("/users");
   };
-  console.log(errors);
 
   return (
     <Box>
@@ -89,9 +102,9 @@ export default function CreateUser() {
                 type="password"
               />
               <Input
-                error={errors.passwordConfirmation as FieldError}
-                {...register("passwordConfirmation")}
-                name="passwordConfirmation"
+                error={errors.password_confirmation as FieldError}
+                {...register("password_confirmation")}
+                name="password_confirmation"
                 label="Confirmação da senha"
                 type="password"
               />

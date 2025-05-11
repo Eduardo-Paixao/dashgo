@@ -1,34 +1,29 @@
 import { Button, Flex, Stack } from "@chakra-ui/react";
-import { Input } from "../components/Form/Input";
-import { useRouter } from "next/router";
+import { Input } from "../src/components/Form/Input";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  FieldError,
-  FieldValues,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { FieldError, SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../src/services/hooks/useAuth";
+import { SignInCredentials } from "../src/types/AuthTypes";
 
 export default function SignIn() {
-  const router = useRouter();
+  const { signIn } = useAuth();
 
   const signInFormSchema = yup.object().shape({
-    email: yup.string().required('E-mail obrigatório').email('E-mail invalido'),
-    password: yup.string().required('Senha obrigatória'),
+    email: yup.string().required("E-mail obrigatório").email("E-mail invalido"),
+    password: yup.string().required("Senha obrigatória"),
   });
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<SignInCredentials>({
     resolver: yupResolver(signInFormSchema),
   });
 
-  const handleSignIn: SubmitHandler<FieldValues> = async (values) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    router.push("/dashboard");
+  const handleSignIn: SubmitHandler<SignInCredentials> = async (values) => {
+    await signIn(values);
   };
   return (
     <Flex w="100vw" h="100vh" alignItems="center" justifyContent="center">
